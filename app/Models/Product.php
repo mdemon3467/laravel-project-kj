@@ -10,6 +10,8 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     function rel_to_category(){ //jokhon onk thakbe tokhon hasmany hobe
       return  $this->belongsTo(category::class , 'category_id');
     }
@@ -21,5 +23,11 @@ class Product extends Model
       }
       function rel_to_inventory(){
         return $this->hasMany(inventory::class, 'product_id','id');
+      }
+      function rel_to_tags(){
+        return $this->hasMany(Tag::class, 'tags', 'id');
+      }
+      function rel_to_gallery(){
+        return $this->hasMany(Gallery::class);
       }
 }

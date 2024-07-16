@@ -133,7 +133,6 @@ class ProductController extends Controller
             $gallery = Gallery::where('product_id',$id)->get(); //delete korle age get kortw hoy pore delete
             
             foreach($gallery as $gal_id){
-                echo $gal_id.'<br>';
                 $delete_form_gallery = public_path('uploads/product/gallery/'.$gal_id->gallery_name);
                 unlink($delete_form_gallery);
                 Gallery::where('product_id',$id)->delete(); 
@@ -156,11 +155,13 @@ class ProductController extends Controller
             $subcategoryies = subcategory::all();
             $brands = Brand::all();
             $tags = Tag::all();
+            $tags_explode = explode(',',$products->tags);
             return view('admin.products.product_edit',[
                 'categoryies'=>$categoryies,
                 'subcategoryies'=>$subcategoryies,
                 'brands'=>$brands,
                 'tags'=>$tags,
+                'tags_explode'=>$tags_explode,
                 'products'=>$products,
             ]);
         }
@@ -168,6 +169,78 @@ class ProductController extends Controller
 
         //product_update
         function product_update(Request $request,$id){
-            print_r($request->all());
+            $product_id = Product::find($id);
+            $tags = implode(',',$request->tag_id);
+            $slug = Str::lower(str_replace(' ','-',$request->product_name).'-'.random_int(22222,99999));
+
+            $preview = $request->preview;
+
+            if($preview == ''){
+                Product::find($id)->update([
+                    'category_id'=>$request->category_id,
+                    'subcategory_id'=>$request->subcategory_id,
+                    'brand_id'=>$request->brand_id,
+                    'product_name'=>$request->product_name,
+                    'sku'=>$request->sku,
+                    'discount'=>$request->discount,
+                    'short_desp'=>$request->short_desp,
+                    'long_desp'=>$request->long_desp,
+                    'aditional'=>$request->aditional,
+                    'tags'=>$tags,
+                    'slug'=>$slug,
+                    'updated_at'=>Carbon::now(),
+                    ]);
+            }
+            else{
+                $delete_form_preview1 = (public_path('uploads/product/preview/'.$product_id->preview));
+                unlink($delete_form_preview1);
+
+                $image = $request->preview;
+                $extension1 = $image->extension();
+                $file_name1 = uniqid().'.'.$extension1;
+
+                Image::make($preview)->resize(700, 700)->save(public_path('uploads/product/preview/'.$file_name1));
+
+                Product::find($id)->update([
+                    'category_id'=>$request->category_id,
+                    'subcategory_id'=>$request->subcategory_id,
+                    'brand_id'=>$request->brand_id,
+                    'product_name'=>$request->product_name,
+                    'sku'=>$request->sku,
+                    'discount'=>$request->discount,
+                    'short_desp'=>$request->short_desp,
+                    'long_desp'=>$request->long_desp,
+                    'aditional'=>$request->aditional,
+                    'tags'=>$tags,
+                    'slug'=>$slug,
+                    'preview'=>$file_name1,
+                    'updated_at'=>Carbon::now(),
+                    ]);
+            }
+            $gallery = $request->gallery;
+                if($gallery != ''){
+                    $gallery = Gallery::where('product_id', $product_id->id)->get();
+                    foreach ($gallery as $item) {
+                        $delete_form_preview2 = (public_path('uploads/product/gallery/'.$item->gallery_name));
+                        unlink($delete_form_preview2); // Delete the file from the filesystem
+                        Gallery::where('product_id',$id)->delete(); 
+                    }
+
+                    $gallery = $request->gallery;
+                    foreach($gallery as $gal){
+                       
+                        $extension2 = $gal->extension();
+                        $file_name2 = Str::lower(str_replace(' ','-',$request->product_name).'-'.random_int(22222,99999)).'.'.$extension2;
+        
+                        Image::make($gal)->resize(700, 700)->save(public_path('uploads/product/gallery/'.$file_name2));
+        
+                        Gallery::insert([
+                            'product_id'=>$product_id->id,
+                            'gallery_name'=>$file_name2,
+                            'created_at'=>Carbon::now(),
+                        ]);
+                    }
+                }
+            return back()->with('edit','edit success');
         }
 }

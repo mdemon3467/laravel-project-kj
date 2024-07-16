@@ -98,7 +98,7 @@
                 </h3>
             </div>
             @if (session('success2'))
-                <strong class="alert alert-success">{{session('success')}}</strong>
+                <strong class="alert alert-success">{{session('success2')}}</strong>
             @endif
             <div class="card-body">
                 <form action="{{route('add.size')}}" method="POST">

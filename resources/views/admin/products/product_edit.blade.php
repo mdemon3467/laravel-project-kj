@@ -6,8 +6,8 @@
             <div class="card-header">
                 <h3>edit Products</h3>
             </div>
-            @if (session('success'))
-            <strong class="alert alert-success">{{session('success')}}</strong>
+            @if (session('edit'))
+            <strong class="alert alert-success">{{session('edit')}}</strong>
             @endif
             <div class="card-body">
                 <form action="{{route('product.update',$products->id)}}" method="POST" enctype="multipart/form-data">
@@ -126,25 +126,18 @@
                         <div class="col-lg-12">
                             <div class="mt-3">
                                 <label for="">Tags</label>
-                                {{-- <select id="select-gear" class="demo-default" multiple placeholder="Select tags..." name="tag_id[]">
-                                    <option value="">Select tags...</option>
-                                    <optgroup label="Climbing">
-                                        @foreach ($tags as $tag)
-                                        <option {{ $products->tags == $tag->id ? 'selected' : '' }} value="{{$tag->id}}">{{$tag->tag_name}}</option>
-                                        @endforeach
-                                    </optgroup>
-                                  </select> --}}
-
                                   <select id="select-gear" class="demo-default" multiple placeholder="Select tags..." name="tag_id[]">
                                     <option value="">Select tags...</option>
                                     <optgroup label="Climbing">
+                                        
                                         @foreach ($tags as $tag)
-                                            <option {{ $products->tags->contains($tag->id) ? 'selected' : '' }} value="{{ $tag->id }}">{{ $tag->tag_name }}</option>
+                                        <option {{ in_array($tag->id, $tags_explode) ? 'selected' : '' }} value="{{ $tag->id}}">{{$tag->tag_name}}
+                                        </option>
                                         @endforeach
+
                                     </optgroup>
                                 </select>
-                                
-
+                            
                                   <div class="mt-2">
                                     @if ($errors->any())
                                         <strong class="text-danger">Plz inter some tag</strong>
