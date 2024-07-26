@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\banner;
+use App\Models\Cart;
 use App\Models\category;
 use App\Models\color;
 use App\Models\countdown;

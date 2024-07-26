@@ -67,6 +67,9 @@
                                 <p>
                                     {{$product_info->short_desp}}
                                 </p>
+                                <form action="{{route('add.cart', $product_info->id)}}" method="POST">
+                                    @csrf
+                        
                                 <div class="product-filter-item color">
                                     <div class="color-name">
                                         <span>Color :</span>
@@ -83,6 +86,9 @@
                                                 @endif
                                             @endforeach
                                         </ul>
+                                        @error('color_id')
+                                            <strong class="text-danger">{{$message}}</strong>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="product-filter-item color filter-size">
@@ -103,13 +109,23 @@
                                         </ul>
                                     </div>
                                 </div>
+                                @error('size_id')
+                                    <strong class="text-danger">{{$message}}</strong>
+                                @enderror
                                 <div class="pro-single-btn">
                                     <div class="quantity cart-plus-minus">
-                                        <input class="text-value" type="text" value="1">
+                                        <input class="text-value" type="text" value="1" name="quantity">
                                     </div>
-                                    <a href="#" class="theme-btn-s2">Add to cart</a>
-                                    <a href="#" class="wl-btn"><i class="fi flaticon-heart"></i></a>
+                                    @auth('customer')
+                                        <button type="submit" class="theme-btn-s2">Add to cart</button>
+                                        <button type="submit" class="wl-btn"><i class="fi flaticon-heart"></i></button>
+                                    @else
+                                        <a href="{{route('customer.login.page')}}" class="theme-btn-s2">Add to cart</a>
+                                        <a href="{{route('customer.login.page')}}" class="wl-btn"><i class="fi flaticon-heart"></i></a>
+                                    @endauth  
                                 </div>
+
+                                </form>
                                 <ul class="important-text">
                                     <li><span>SKU:</span>{{$product_info->sku}}</li>
                                     <li><span>Categories:</span>  <a style="text-decoration:none; color:#A5A5A5;" href="{{route('category.wise.product',$product_info->rel_to_category->slug)}}"> {{$product_info->rel_to_category->category_name}}</a></li>
@@ -370,4 +386,38 @@
       });
     })
 </script>
+{{-- @if (session('cart'))
+    <script>
+        Swal.fire({
+    title: "{{session('cart')}}",
+    text: "You can see cart list now!",
+    icon: "success"
+    });
+
+    // swal({
+    //  title: "Deleted!",
+    //  text: "Your row has been deleted.",
+    //  type: "success",
+    //  timer: 3000
+    //  },
+    //  function () {
+    //         location.reload(true);
+    //         tr.hide();
+    //  });
+    </script>
+
+@endif --}}
+@if (session('cart'))
+    <script>
+        Swal.fire({
+            title: "{{ session('cart') }}",
+            text: "You can see the cart list now!",
+            icon: "success"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.reload(true);
+            }
+        });
+    </script>
+@endif
 @endsection

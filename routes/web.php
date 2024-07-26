@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
@@ -28,10 +29,6 @@ Route::get('/category/wise/product/{slug}', [FrontendController::class , 'catego
 Route::get('/subcategory/wise/product/{id}', [FrontendController::class , 'subcategory_wise_product'])->name('subcategory.wise.product');
 Route::get('/discount/product/50', [FrontendController::class , 'discount_product_50'])->name('discount.product.50');
 Route::get('/discount/product/70', [FrontendController::class , 'discount_product_70'])->name('discount.product.70');
-
-
-
-
 
 
 Route::get('/dashboard', function () {
@@ -140,3 +137,7 @@ Route::post('/country/wise/city', [CustomerController::class, 'country_wise_city
 Route::post('/customer/profile/change', [CustomerController::class, 'customer_profile_change'])->name('customer.profile.change');
 Route::get('/customer/password/change', [CustomerController::class, 'customer_password_change'])->name('customer.password.change');
 Route::post('/customer/new/password', [CustomerController::class, 'customer_new_password'])->name('customer.new.password');
+
+//Cart section
+Route::post('/add/to/cart/{product_id}', [CartController::class, 'add_cart'])->name('add.cart');
+Route::get('/delete/cart/{cart_id}', [CartController::class, 'delete_cart'])->name('delete.cart');
